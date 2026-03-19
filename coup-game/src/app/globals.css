@@ -1,0 +1,105 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Backgrounds — deep navy, not flat black */
+  --bg-0: oklch(7% 0.02 240);
+  --bg-1: oklch(11% 0.025 240);
+  --bg-2: oklch(15% 0.025 240);
+  --bg-3: oklch(19% 0.02 240);
+
+  /* Text */
+  --text-primary: oklch(92% 0.01 80);
+  --text-secondary: oklch(58% 0.015 240);
+  --text-muted: oklch(38% 0.01 240);
+
+  /* Amber gold accent */
+  --gold: oklch(72% 0.14 82);
+  --gold-dim: oklch(52% 0.10 82);
+  --gold-subtle: oklch(20% 0.04 82);
+
+  /* Character colors — sophisticated, not garish */
+  --duke:       oklch(58% 0.20 295);
+  --assassin:   oklch(55% 0.22 22);
+  --captain:    oklch(58% 0.18 242);
+  --ambassador: oklch(54% 0.17 155);
+  --contessa:   oklch(58% 0.22 12);
+
+  /* Borders */
+  --border: oklch(22% 0.015 240);
+  --border-subtle: oklch(16% 0.015 240);
+
+  /* Spacing rhythm — base 4px */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+
+  /* Safe areas */
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+
+  /* Legacy aliases (for gradual migration) */
+  --bg-primary: oklch(7% 0.02 240);
+  --bg-secondary: oklch(11% 0.025 240);
+  --bg-card: oklch(15% 0.025 240);
+  --gold-legacy: oklch(72% 0.14 82);
+  --background: oklch(7% 0.02 240);
+  --foreground: oklch(92% 0.01 80);
+}
+
+@layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+  }
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    font-size: 16px;
+  }
+  body {
+    background-color: var(--bg-0);
+    color: var(--text-primary);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  button, [role="button"] {
+    touch-action: manipulation;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 3px; height: 3px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+/* Typography utilities */
+.font-display { font-family: 'Cormorant Garamond', serif; }
+.font-ui { font-family: 'DM Sans', sans-serif; }
+
+/* Legacy cinzel alias — kept so old code using font-cinzel still compiles */
+.font-cinzel { font-family: 'Cormorant Garamond', serif; }
+
+/* Coin dot utility */
+.coin-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--gold);
+  display: inline-block;
+  flex-shrink: 0;
+}
