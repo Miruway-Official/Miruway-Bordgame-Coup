@@ -48,127 +48,127 @@ Run `supabase/schema.sql` in your Supabase SQL editor to create the required tab
 3. Wait for all players to ready up
 4. The host starts the game
 
-## Use Case Flow
+## กระบวนการใช้งาน (Use Case Flow)
 
-### UC-1: Create & Join a Room
+### UC-1: สร้างห้องและเข้าร่วมเกม
 
 ```
-Player A (Host)                        Player B (Guest)
+ผู้เล่น A (เจ้าของห้อง)                 ผู้เล่น B (แขก)
 ─────────────────────────────────────────────────────────
-Open app
-  → Click "เล่นออนไลน์"
-  → Click "สร้างห้อง" (Create Room)
-  → Room created, code shown (e.g. ABC123)
-  → Share code with friends
-                                         Open app
-                                           → Click "เล่นออนไลน์"
-                                           → Enter room code ABC123
-                                           → Click "เข้าร่วม" (Join)
-                                           → Appears in player list
-Both players click "พร้อม" (Ready)
-Host clicks "เริ่มเกม" (Start Game)
-  → Game begins for all players
+เปิดแอป
+  → กดปุ่ม "เล่นออนไลน์"
+  → กด "สร้างห้อง"
+  → ได้รับรหัสห้อง (เช่น ABC123)
+  → แชร์รหัสให้เพื่อน
+                                         เปิดแอป
+                                           → กดปุ่ม "เล่นออนไลน์"
+                                           → กรอกรหัสห้อง ABC123
+                                           → กด "เข้าร่วม"
+                                           → ชื่อปรากฏในรายชื่อผู้เล่น
+ทุกคนกด "พร้อม"
+เจ้าของห้องกด "เริ่มเกม"
+  → เกมเริ่มต้นสำหรับทุกคน
 ```
 
 ---
 
-### UC-2: Taking a Turn
+### UC-2: การเล่นในตาของตัวเอง
 
 ```
-Active Player                          Other Players
+ผู้เล่นที่ถึงตา                          ผู้เล่นคนอื่น
 ─────────────────────────────────────────────────────────
-Action panel appears
-  → Select an action:
-     • Income (+1 coin, no challenge)
-     • Foreign Aid (+2 coins)
-     • Coup (pay 7 coins, eliminate target)
-     • Duke (Tax, +3 coins)
-     • Assassin (pay 3 coins, eliminate target)
-     • Captain (Steal 2 coins from target)
-     • Ambassador (Exchange cards with deck)
+แผงเลือกการกระทำปรากฏขึ้น
+  → เลือกการกระทำ:
+     • รายได้ — รับ 1 เหรียญ (ท้าทายไม่ได้)
+     • ความช่วยเหลือต่างชาติ — รับ 2 เหรียญ
+     • รัฐประหาร — จ่าย 7 เหรียญ กำจัดเป้าหมาย
+     • ดยุค — เก็บภาษี รับ 3 เหรียญ
+     • นักฆ่า — จ่าย 3 เหรียญ ลอบสังหารเป้าหมาย
+     • กัปตัน — ขโมย 2 เหรียญจากเป้าหมาย
+     • ทูต — แลกเปลี่ยนไพ่กับกอง
 
-  → If action requires a target:
-       Select target player
-                                        Response dialog appears:
-                                          → Challenge (if action claims a character)
-                                          → Block (if action is blockable)
-                                          → Pass
+  → หากการกระทำต้องการเป้าหมาย:
+       เลือกผู้เล่นที่ต้องการ
+                                         กล่องตอบสนองปรากฏขึ้น:
+                                           → ท้าทาย (ถ้าผู้เล่นอ้างตัวละคร)
+                                           → บล็อก (ถ้าการกระทำบล็อกได้)
+                                           → ผ่าน
 ```
 
 ---
 
-### UC-3: Challenge Flow
+### UC-3: กระบวนการท้าทาย
 
 ```
-Challenger                             Claimer (Actor)
+ผู้ท้าทาย                               ผู้ถูกท้าทาย
 ─────────────────────────────────────────────────────────
-Click "ท้าทาย" (Challenge)
-                                        If HAS the card:
-                                          → Reveal card ✓
-                                          → Challenger loses 1 influence
-                                          → Claimer gets new card from deck
-                                          → Action resolves normally
+กด "ท้าทาย"
+                                         ถ้า มีไพ่จริง:
+                                           → เปิดไพ่ให้ดู ✓
+                                           → ผู้ท้าทายเสียอิทธิพล 1 ใบ
+                                           → ผู้ถูกท้าทายจั่วไพ่ใหม่
+                                           → การกระทำดำเนินต่อตามปกติ
 
-                                        If does NOT have the card:
-                                          → Reveal any card ✗
-                                          → Claimer loses 1 influence
-                                          → Action is cancelled
+                                         ถ้า ไม่มีไพ่ (โกหก):
+                                           → เปิดไพ่ใดก็ได้ ✗
+                                           → ผู้ถูกท้าทายเสียอิทธิพล 1 ใบ
+                                           → การกระทำถูกยกเลิก
 ```
 
 ---
 
-### UC-4: Block Flow
+### UC-4: กระบวนการบล็อก
 
 ```
-Blocker                                Actor
+ผู้บล็อก                                ผู้กระทำ
 ─────────────────────────────────────────────────────────
-Click "บล็อก" (Block) with a character
-  e.g. Block Steal with Captain
-                                        Response dialog appears:
-                                          → Challenge the block
-                                          → Pass (accept the block)
+กด "บล็อก" โดยใช้ตัวละคร
+  เช่น บล็อกการขโมยด้วยกัปตัน
+                                         กล่องตอบสนองปรากฏขึ้น:
+                                           → ท้าทายการบล็อก
+                                           → ผ่าน (ยอมรับการบล็อก)
 
-  If Actor challenges the block:
-    → Blocker reveals card
-    → If blocker HAS the card:
-         Actor loses 1 influence
-         Block succeeds
-    → If blocker does NOT have the card:
-         Blocker loses 1 influence
-         Original action resolves
+  ถ้าผู้กระทำท้าทายการบล็อก:
+    → ผู้บล็อกเปิดไพ่
+    → ถ้า มีไพ่จริง:
+         ผู้กระทำเสียอิทธิพล 1 ใบ
+         การบล็อกสำเร็จ
+    → ถ้า ไม่มีไพ่ (โกหก):
+         ผู้บล็อกเสียอิทธิพล 1 ใบ
+         การกระทำดำเนินต่อตามปกติ
 ```
 
 ---
 
-### UC-5: Losing Influence
+### UC-5: การเสียอิทธิพล
 
 ```
-Player
+ผู้เล่น
 ───────────────────────────────────────
-Lose influence trigger:
-  • Lost a challenge
-  • Was successfully assassinated / couped
+เงื่อนไขที่ทำให้เสียอิทธิพล:
+  • แพ้การท้าทาย
+  • ถูกลอบสังหารหรือถูกรัฐประหารสำเร็จ
 
-Reveal dialog appears
-  → Select which card to reveal (lose)
-  → Card is flipped face-up (DEAD)
-  → If both cards revealed → eliminated from game
+กล่องเปิดไพ่ปรากฏขึ้น
+  → เลือกไพ่ที่จะเปิดเผย (เสีย)
+  → ไพ่ถูกพลิกหน้าขึ้น (ตาย)
+  → ถ้าไพ่ทั้ง 2 ใบถูกเปิด → ถูกคัดออกจากเกม
 
-Last player standing wins
+ผู้เล่นสุดท้ายที่เหลืออยู่คือผู้ชนะ
 ```
 
 ---
 
-### Character Ability Reference
+### ตารางความสามารถของตัวละคร
 
-| Character | Action | Blocked By |
-|-----------|--------|------------|
-| Duke | Tax (+3 coins) | — |
-| Assassin | Assassinate (pay 3, eliminate) | Contessa |
-| Captain | Steal (take 2 coins from target) | Captain, Ambassador |
-| Ambassador | Exchange (swap cards with deck) | — |
-| Contessa | — | Blocks Assassinate |
-| — | Foreign Aid (+2 coins) | Duke |
+| ตัวละคร | ความสามารถ | ถูกบล็อกโดย |
+|---------|-----------|------------|
+| ดยุค | เก็บภาษี (+3 เหรียญ) | — |
+| นักฆ่า | ลอบสังหาร (จ่าย 3 เหรียญ กำจัดเป้าหมาย) | คอนเทสซา |
+| กัปตัน | ขโมย (เอา 2 เหรียญจากเป้าหมาย) | กัปตัน, ทูต |
+| ทูต | แลกเปลี่ยนไพ่กับกอง | — |
+| คอนเทสซา | — | บล็อกการลอบสังหาร |
+| — | ความช่วยเหลือต่างชาติ (+2 เหรียญ) | ดยุค |
 
 ---
 
