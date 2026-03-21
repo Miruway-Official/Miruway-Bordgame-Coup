@@ -25,6 +25,7 @@ export interface AIDecision {
   claimedCharacter?: CharacterName;
   cardId?: string;
   keptCardIds?: string[];
+  offeredHandCardId?: string;
   delayMs: number;
 }
 
@@ -41,16 +42,16 @@ export function decideAction(state: GameState, aiPlayer: Player): AIDecision {
 
   const myChars = aiPlayer.cards.filter(c => !c.revealed).map(c => c.character);
 
-  if (myChars.includes('Duke') && available.includes('tax')) {
+  if (myChars.includes('เจ้าพยา') && available.includes('tax')) {
     return { type: 'action', actionType: 'tax', delayMs: thinkingDelay(personality) };
   }
-  if (myChars.includes('Captain') && available.includes('steal') && targets.length > 0) {
+  if (myChars.includes('จอมโจร') && available.includes('steal') && targets.length > 0) {
     const richest = targets.reduce((a, b) => a.coins > b.coins ? a : b);
     if (richest.coins > 0) {
       return { type: 'action', actionType: 'steal', targetId: richest.id, delayMs: thinkingDelay(personality) };
     }
   }
-  if (myChars.includes('Assassin') && aiPlayer.coins >= 3 && available.includes('assassinate')) {
+  if (myChars.includes('นักฆ่า') && aiPlayer.coins >= 3 && available.includes('assassinate')) {
     const target = targets[Math.floor(rand() * targets.length)];
     return { type: 'action', actionType: 'assassinate', targetId: target.id, delayMs: thinkingDelay(personality) };
   }
@@ -133,18 +134,35 @@ export function decideLoseInfluence(state: GameState, aiPlayer: Player): AIDecis
   const unrevealed = aiPlayer.cards.filter(c => !c.revealed);
   if (unrevealed.length === 0) return { type: 'lose_influence', cardId: aiPlayer.cards[0]?.id, delayMs: thinkingDelay(personality) };
 
-  const nonContessa = unrevealed.filter(c => c.character !== 'Contessa');
+  const nonContessa = unrevealed.filter(c => c.character !== 'รัชทายาท');
   const card = nonContessa.length > 0 ? nonContessa[0] : unrevealed[0];
   return { type: 'lose_influence', cardId: card.id, delayMs: thinkingDelay(personality) };
 }
 
 export function decideExchange(state: GameState, aiPlayer: Player): AIDecision {
   const personality = getPersonality(aiPlayer);
-  const exchangeCards = state.exchangeCards ?? [];
+  const priority: CharacterName[] = ['เจ้าพยา', 'นักฆ่า', 'จอมโจร', 'ทูต', 'รัชทายาท'];
+  const drawnCards = state.exchangeCards ?? [];
+  const handCardIds = state.exchangeHandCardIds ?? [];
+  const handCards = aiPlayer.cards.filter(c => handCardIds.includes(c.id));
 
-  const priority: CharacterName[] = ['Duke', 'Assassin', 'Captain', 'Ambassador', 'Contessa'];
-  const sorted = [...exchangeCards].sort((a, b) => priority.indexOf(a.character) - priority.indexOf(b.character));
-  const keep = sorted.slice(0, 2).map(c => c.id);
+  // Offer the least valuable hand card
+  const sortedHand = [...handCards].sort(
+    (a, b) => priority.indexOf(b.character) - priority.indexOf(a.character)
+  );
+  const offeredHandCard = sortedHand[0];
 
-  return { type: 'exchange_select', keptCardIds: keep, delayMs: thinkingDelay(personality) };
+  // Pool = offered hand card + drawn cards
+  const pool = offeredHandCard ? [offeredHandCard, ...drawnCards] : drawnCards;
+  const sortedPool = [...pool].sort(
+    (a, b) => priority.indexOf(a.character) - priority.indexOf(b.character)
+  );
+  const keptCard = sortedPool[0];
+
+  return {
+    type: 'exchange_select',
+    keptCardIds: keptCard ? [keptCard.id] : [],
+    offeredHandCardId: offeredHandCard?.id,
+    delayMs: thinkingDelay(personality),
+  };
 }

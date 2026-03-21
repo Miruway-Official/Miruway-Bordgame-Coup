@@ -3,7 +3,7 @@ import { ChevronLeft } from 'lucide-react';
 import { CHARACTER_DESCRIPTIONS, CHARACTER_COLORS } from '@/lib/engine/constants';
 import { CharacterName } from '@/lib/engine/types';
 
-const characters: CharacterName[] = ['Duke', 'Assassin', 'Captain', 'Ambassador', 'Contessa'];
+const characters: CharacterName[] = ['เจ้าพยา', 'นักฆ่า', 'จอมโจร', 'ทูต', 'รัชทายาท'];
 
 export default function RulesPage() {
   return (

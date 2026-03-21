@@ -23,7 +23,7 @@ interface GameStore {
   humanPassBlock: () => void;
   humanChallengeBlock: () => void;
   humanLoseInfluence: (cardId: string) => void;
-  humanCompleteExchange: (keptCardIds: string[]) => void;
+  humanCompleteExchange: (keptCardId: string, offeredHandCardId: string) => void;
 
   // Internal - exposed for scheduling
   triggerAITurn?: () => void;
@@ -104,10 +104,10 @@ export const useGameStore = create<GameStore>((set, get) => ({
     scheduleAIResponses(newState, set, get);
   },
 
-  humanCompleteExchange: (keptCardIds) => {
+  humanCompleteExchange: (keptCardId, offeredHandCardId) => {
     const { gameState } = get();
     if (!gameState) return;
-    const newState = completeExchange(gameState, keptCardIds);
+    const newState = completeExchange(gameState, keptCardId, offeredHandCardId);
     set({ gameState: newState });
     scheduleAIResponses(newState, set, get);
   },
@@ -242,7 +242,7 @@ function scheduleAIResponses(
         set({ isAIThinking: false });
         return;
       }
-      const newState = completeExchange(gameState, decision.keptCardIds);
+      const newState = completeExchange(gameState, decision.keptCardIds![0], decision.offeredHandCardId!);
       set({ gameState: newState, isAIThinking: false });
       scheduleAIResponses(newState, set, get);
     }, decision.delayMs);

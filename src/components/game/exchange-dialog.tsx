@@ -6,22 +6,34 @@ import { Card } from '@/lib/engine/types';
 import { GameCard } from './card';
 
 interface ExchangeDialogProps {
-  cards: Card[];
-  onConfirm: (keptCardIds: string[]) => void;
+  handCards: Card[];
+  drawnCards: Card[];
+  onConfirm: (keptCardId: string, offeredHandCardId: string) => void;
 }
 
-export function ExchangeDialog({ cards, onConfirm }: ExchangeDialogProps) {
-  const [selected, setSelected] = useState<string[]>([]);
-  const unrevealed = cards.filter(c => !c.revealed);
+export function ExchangeDialog({ handCards, drawnCards, onConfirm }: ExchangeDialogProps) {
+  const [step, setStep] = useState<1 | 2>(1);
+  const [offeredHandCardId, setOfferedHandCardId] = useState<string | null>(null);
+  const [keptCardId, setKeptCardId] = useState<string | null>(null);
 
-  const toggle = (id: string) => {
-    setSelected(prev =>
-      prev.includes(id)
-        ? prev.filter(x => x !== id)
-        : prev.length >= 2
-          ? [...prev.slice(1), id]
-          : [...prev, id],
-    );
+  const poolCards = offeredHandCardId
+    ? [handCards.find(c => c.id === offeredHandCardId)!, ...drawnCards]
+    : drawnCards;
+
+  const handleOfferSelect = (id: string) => {
+    setOfferedHandCardId(id);
+    setKeptCardId(null);
+    setStep(2);
+  };
+
+  const handleKeepSelect = (id: string) => {
+    setKeptCardId(id);
+  };
+
+  const handleConfirm = () => {
+    if (keptCardId && offeredHandCardId) {
+      onConfirm(keptCardId, offeredHandCardId);
+    }
   };
 
   return (
@@ -56,7 +68,6 @@ export function ExchangeDialog({ cards, onConfirm }: ExchangeDialogProps) {
           textAlign: 'center',
         }}
       >
-        {/* Eyebrow */}
         <div
           style={{
             fontFamily: "'DM Sans', sans-serif",
@@ -68,31 +79,48 @@ export function ExchangeDialog({ cards, onConfirm }: ExchangeDialogProps) {
             marginBottom: 10,
           }}
         >
-          การแลกไพ่เอกอัครราชทูต
+          ความสามารถทูต
         </div>
 
-        {/* Heading */}
         <div
           style={{
             fontFamily: "'Cormorant Garamond', serif",
-            fontSize: 30,
+            fontSize: 28,
             fontWeight: 700,
             lineHeight: 1.1,
             color: 'var(--text-primary)',
             marginBottom: 8,
           }}
         >
-          เลือกไพ่ 2 ใบที่จะเก็บ
+          {step === 1 ? 'เลือก 1 ใบจากมือเข้ากอง' : 'เลือก 1 ใบที่จะเก็บ'}
         </div>
         <div
           style={{
-            fontSize: 13,
+            fontSize: 12,
             color: 'var(--text-secondary)',
             fontFamily: "'DM Sans', sans-serif",
             marginBottom: 24,
           }}
         >
-          เลือกพอดี 2 ใบ ส่วนที่เหลือคืนสู่สำรับ
+          {step === 1
+            ? 'ไพ่ที่เลือกจะรวมกับไพ่จั่ว 2 ใบ'
+            : 'เลือก 1 ใบจากกองรวม 3 ใบ — ที่เหลือคืนสู่สำรับ'}
+        </div>
+
+        {/* Step indicator */}
+        <div style={{ display: 'flex', gap: 6, justifyContent: 'center', marginBottom: 20 }}>
+          {[1, 2].map(s => (
+            <div
+              key={s}
+              style={{
+                width: 24,
+                height: 4,
+                borderRadius: 2,
+                background: step >= s ? 'var(--ambassador)' : 'var(--border)',
+                transition: 'background 0.2s ease',
+              }}
+            />
+          ))}
         </div>
 
         {/* Cards */}
@@ -105,79 +133,96 @@ export function ExchangeDialog({ cards, onConfirm }: ExchangeDialogProps) {
             marginBottom: 20,
           }}
         >
-          {unrevealed.map(card => (
-            <motion.div
-              key={card.id}
-              whileTap={{ scale: 0.93 }}
-              onClick={() => toggle(card.id)}
-              style={{ cursor: 'pointer', position: 'relative' }}
-            >
-              <GameCard
-                card={card}
-                isHidden={false}
-                isSelectable
-                isSelected={selected.includes(card.id)}
-                size="md"
-              />
-              {selected.includes(card.id) && (
-                <div
-                  style={{
-                    position: 'absolute',
-                    top: -6,
-                    right: -6,
-                    width: 20,
-                    height: 20,
-                    borderRadius: '50%',
-                    background: 'var(--ambassador)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: 11,
-                    fontWeight: 700,
-                    color: '#fff',
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.4)',
-                  }}
+          {step === 1
+            ? handCards.map(card => (
+                <motion.div
+                  key={card.id}
+                  whileTap={{ scale: 0.93 }}
+                  onClick={() => handleOfferSelect(card.id)}
+                  style={{ cursor: 'pointer', position: 'relative' }}
                 >
-                  {selected.indexOf(card.id) + 1}
-                </div>
-              )}
-            </motion.div>
-          ))}
+                  <GameCard
+                    card={card}
+                    isHidden={false}
+                    isSelectable
+                    isSelected={offeredHandCardId === card.id}
+                    size="md"
+                  />
+                </motion.div>
+              ))
+            : poolCards.filter(Boolean).map(card => (
+                <motion.div
+                  key={card.id}
+                  whileTap={{ scale: 0.93 }}
+                  onClick={() => handleKeepSelect(card.id)}
+                  style={{ cursor: 'pointer', position: 'relative' }}
+                >
+                  <GameCard
+                    card={card}
+                    isHidden={false}
+                    isSelectable
+                    isSelected={keptCardId === card.id}
+                    size="md"
+                  />
+                  {card.id === offeredHandCardId && (
+                    <div style={{
+                      position: 'absolute',
+                      bottom: -6,
+                      left: '50%',
+                      transform: 'translateX(-50%)',
+                      fontSize: 9,
+                      fontWeight: 700,
+                      color: 'var(--ambassador)',
+                      fontFamily: "'DM Sans', sans-serif",
+                      letterSpacing: '0.05em',
+                      whiteSpace: 'nowrap',
+                    }}>
+                      จากมือ
+                    </div>
+                  )}
+                </motion.div>
+              ))}
         </div>
 
-        <div
-          style={{
-            fontSize: 12,
-            color: 'var(--text-muted)',
-            fontFamily: "'DM Sans', sans-serif",
-            marginBottom: 16,
-          }}
-        >
-          {selected.length}/2 ใบที่เลือก
-        </div>
+        {step === 2 && (
+          <motion.button
+            whileTap={keptCardId ? { scale: 0.97 } : {}}
+            onClick={handleConfirm}
+            disabled={!keptCardId}
+            style={{
+              width: '100%',
+              padding: '16px',
+              borderRadius: 12,
+              border: `1px solid ${keptCardId ? 'var(--ambassador)' : 'var(--border)'}`,
+              background: keptCardId ? 'oklch(14% 0.05 155)' : 'transparent',
+              color: keptCardId ? 'var(--ambassador)' : 'var(--text-muted)',
+              fontFamily: "'DM Sans', sans-serif",
+              fontSize: 15,
+              fontWeight: 600,
+              cursor: keptCardId ? 'pointer' : 'not-allowed',
+              transition: 'all 0.2s ease',
+            }}
+          >
+            ยืนยันการแลก
+          </motion.button>
+        )}
 
-        <motion.button
-          whileTap={selected.length === 2 ? { scale: 0.97 } : {}}
-          onClick={() => selected.length === 2 && onConfirm(selected)}
-          disabled={selected.length !== 2}
-          style={{
-            width: '100%',
-            padding: '16px',
-            borderRadius: 12,
-            border: `1px solid ${selected.length === 2 ? 'var(--ambassador)' : 'var(--border)'}`,
-            background:
-              selected.length === 2 ? 'oklch(14% 0.05 155)' : 'transparent',
-            color:
-              selected.length === 2 ? 'var(--ambassador)' : 'var(--text-muted)',
-            fontFamily: "'DM Sans', sans-serif",
-            fontSize: 15,
-            fontWeight: 600,
-            cursor: selected.length === 2 ? 'pointer' : 'not-allowed',
-            transition: 'all 0.2s ease',
-          }}
-        >
-          ยืนยันการแลก
-        </motion.button>
+        {step === 2 && (
+          <button
+            onClick={() => { setStep(1); setKeptCardId(null); }}
+            style={{
+              marginTop: 10,
+              background: 'transparent',
+              border: 'none',
+              color: 'var(--text-muted)',
+              fontFamily: "'DM Sans', sans-serif",
+              fontSize: 12,
+              cursor: 'pointer',
+            }}
+          >
+            ← เลือกใหม่
+          </button>
+        )}
       </motion.div>
     </motion.div>
   );

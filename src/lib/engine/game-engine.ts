@@ -62,10 +62,10 @@ export function declareAction(state: GameState, actionType: ActionType, targetId
   switch (actionType) {
     case 'income': logText = `${actor.name} รับรายได้ (+1 เหรียญ)`; break;
     case 'foreign_aid': logText = `${actor.name} ขอความช่วยเหลือต่างประเทศ (+2 เหรียญ)`; break;
-    case 'tax': logText = `${actor.name} อ้างตัวเป็นดยุค เก็บภาษี (+3 เหรียญ)`; break;
-    case 'steal': logText = `${actor.name} อ้างตัวเป็นกัปตัน ขโมยจาก ${target?.name}`; break;
+    case 'tax': logText = `${actor.name} อ้างตัวเป็นเจ้าพยา เก็บภาษี (+3 เหรียญ)`; break;
+    case 'steal': logText = `${actor.name} อ้างตัวเป็นจอมโจร ขโมยจาก ${target?.name}`; break;
     case 'assassinate': logText = `${actor.name} อ้างตัวเป็นนักฆ่า เล็งเป้า ${target?.name}`; break;
-    case 'exchange': logText = `${actor.name} อ้างตัวเป็นเอกอัครราชทูต แลกไพ่`; break;
+    case 'exchange': logText = `${actor.name} อ้างตัวเป็นทูต แลกไพ่`; break;
     case 'coup': logText = `${actor.name} รัฐประหาร ${target?.name}!`; break;
   }
 
@@ -304,28 +304,36 @@ export function startExchange(state: GameState): GameState {
       drawn.push(card);
     }
   }
+  const handCardIds = actor.cards.filter(c => !c.revealed).map(c => c.id);
   return {
     ...state,
     deck,
     phase: 'EXCHANGE_SELECT',
-    exchangeCards: [...actor.cards.filter(c => !c.revealed), ...drawn],
-    log: [...state.log, createLogEntry(`${actor.name} จั่วไพ่ 2 ใบเพื่อแลก`, 'action', state.turnNumber)],
+    exchangeCards: drawn,
+    exchangeHandCardIds: handCardIds,
+    log: [...state.log, createLogEntry(`${actor.name} อ้างตัวเป็นทูต เลือกไพ่แลกเปลี่ยน`, 'action', state.turnNumber)],
   };
 }
 
-export function completeExchange(state: GameState, keptCardIds: string[]): GameState {
+export function completeExchange(state: GameState, keptCardId: string, offeredHandCardId: string): GameState {
   const actor = state.players.find(p => p.id === state.pendingAction?.actorId)!;
-  const allCards = state.exchangeCards ?? [];
-  const keptCards = allCards.filter(c => keptCardIds.includes(c.id));
-  const returnedCards = allCards.filter(c => !keptCardIds.includes(c.id));
+  const drawnCards = state.exchangeCards ?? [];
+
+  // Pool = [offered hand card, ...drawn cards]
+  const offeredHandCard = actor.cards.find(c => c.id === offeredHandCardId);
+  const allPoolCards = [...(offeredHandCard ? [offeredHandCard] : []), ...drawnCards];
+  const keptCard = allPoolCards.find(c => c.id === keptCardId);
+  const returnedCards = allPoolCards.filter(c => c.id !== keptCardId);
 
   let deck = state.deck;
   for (const card of returnedCards) {
     deck = returnCard(deck, card);
   }
 
+  // New hand = revealed cards + unrevealed cards NOT offered + 1 kept card from pool
   const revealedCards = actor.cards.filter(c => c.revealed);
-  const newHand = [...revealedCards, ...keptCards];
+  const keptHandCards = actor.cards.filter(c => !c.revealed && c.id !== offeredHandCardId);
+  const newHand = [...revealedCards, ...keptHandCards, ...(keptCard ? [keptCard] : [])];
 
   const updatedPlayers = state.players.map(p =>
     p.id === actor.id ? { ...p, cards: newHand } : p
@@ -337,8 +345,9 @@ export function completeExchange(state: GameState, keptCardIds: string[]): GameS
     deck,
     phase: 'RESOLVE',
     exchangeCards: undefined,
+    exchangeHandCardIds: undefined,
     pendingAction: undefined,
-    log: [...state.log, createLogEntry(`${actor.name} แลกไพ่เสร็จสิ้น`, 'action', state.turnNumber)],
+    log: [...state.log, createLogEntry(`${actor.name} แลกไพ่ทูตเสร็จสิ้น`, 'action', state.turnNumber)],
   };
 }
 

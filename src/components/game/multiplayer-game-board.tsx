@@ -79,6 +79,8 @@ export function MultiplayerGameBoard({ myPlayerId }: MultiplayerGameBoardProps) 
   const blockableChars = pendingAction ? getBlockableCharacters(pendingAction.type) : [];
   const myIsTarget = myPlayer ? pendingAction?.targetId === myPlayer.id : false;
 
+  const exchangeHandCards = (myPlayer?.cards ?? []).filter(c => !c.revealed);
+
   const availableActions =
     isMyTurn && phase === 'ACTION_SELECT' && myPlayer
       ? getAvailableActions(myPlayer, livingPlayers)
@@ -134,9 +136,9 @@ export function MultiplayerGameBoard({ myPlayerId }: MultiplayerGameBoardProps) 
     sendMove({ type: 'lose_influence', playerId: myPlayer.id, cardId });
   };
 
-  const handleCompleteExchange = (keptCardIds: string[]) => {
+  const handleCompleteExchange = (keptCardId: string, offeredHandCardId: string) => {
     if (!myPlayer) return;
-    sendMove({ type: 'exchange_complete', playerId: myPlayer.id, keptCardIds });
+    sendMove({ type: 'exchange_complete', playerId: myPlayer.id, keptCardIds: [keptCardId], offeredHandCardId });
   };
 
   const handlePlayAgain = () => {
@@ -331,10 +333,11 @@ export function MultiplayerGameBoard({ myPlayerId }: MultiplayerGameBoardProps) 
         )}
 
         {/* Exchange */}
-        {myMustExchange && exchangeCards && (
+        {myMustExchange && (
           <ExchangeDialog
-            cards={exchangeCards}
-            onConfirm={handleCompleteExchange}
+            handCards={exchangeHandCards}
+            drawnCards={exchangeCards ?? []}
+            onConfirm={(keptCardId, offeredHandCardId) => handleCompleteExchange(keptCardId, offeredHandCardId)}
           />
         )}
 

@@ -2,15 +2,15 @@ import Link from 'next/link';
 import { CHARACTER_DESCRIPTIONS, CHARACTER_COLORS } from '@/lib/engine/constants';
 import { CharacterName } from '@/lib/engine/types';
 
-const characters: CharacterName[] = ['Duke', 'Assassin', 'Captain', 'Ambassador', 'Contessa'];
+const characters: CharacterName[] = ['เจ้าพยา', 'นักฆ่า', 'จอมโจร', 'ทูต', 'รัชทายาท'];
 
 // Resolve character initial for display
 const CHAR_INITIAL: Record<CharacterName, string> = {
-  Duke: 'D',
-  Assassin: 'A',
-  Captain: 'C',
-  Ambassador: 'Am',
-  Contessa: 'Co',
+  'เจ้าพยา': 'พ',
+  'นักฆ่า': 'น',
+  'จอมโจร': 'จ',
+  'ทูต': 'ท',
+  'รัชทายาท': 'ร',
 };
 
 export default function HomePage() {

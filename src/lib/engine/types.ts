@@ -1,4 +1,4 @@
-export type CharacterName = 'Duke' | 'Assassin' | 'Captain' | 'Ambassador' | 'Contessa';
+export type CharacterName = 'เจ้าพยา' | 'นักฆ่า' | 'จอมโจร' | 'ทูต' | 'รัชทายาท';
 export type ActionType = 'income' | 'foreign_aid' | 'tax' | 'steal' | 'assassinate' | 'exchange' | 'coup';
 export type GamePhase =
   | 'ACTION_SELECT'
@@ -58,6 +58,7 @@ export interface GameState {
   pendingBlock?: PendingBlock;
   loseInfluenceContext?: LoseInfluenceContext;
   exchangeCards?: Card[];
+  exchangeHandCardIds?: string[];
   winner?: string;
   log: GameLogEntry[];
   turnNumber: number;

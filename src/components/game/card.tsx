@@ -5,19 +5,19 @@ import { Card as CardType, CharacterName } from '@/lib/engine/types';
 
 // Large single letter initial, editorial style
 const CHAR_INITIAL: Record<CharacterName, string> = {
-  Duke: 'D',
-  Assassin: 'A',
-  Captain: 'C',
-  Ambassador: 'Am',
-  Contessa: 'Co',
+  'เจ้าพยา': 'พ',
+  'นักฆ่า': 'น',
+  'จอมโจร': 'จ',
+  'ทูต': 'ท',
+  'รัชทายาท': 'ร',
 };
 
 const CHAR_COLOR_VAR: Record<CharacterName, string> = {
-  Duke: 'var(--duke)',
-  Assassin: 'var(--assassin)',
-  Captain: 'var(--captain)',
-  Ambassador: 'var(--ambassador)',
-  Contessa: 'var(--contessa)',
+  'เจ้าพยา': 'var(--duke)',
+  'นักฆ่า': 'var(--assassin)',
+  'จอมโจร': 'var(--captain)',
+  'ทูต': 'var(--ambassador)',
+  'รัชทายาท': 'var(--contessa)',
 };
 
 const SIZE = {

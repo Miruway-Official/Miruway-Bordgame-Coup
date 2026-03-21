@@ -24,6 +24,7 @@ export interface GameMove {
   character?: CharacterName;
   cardId?: string;
   keptCardIds?: string[];
+  offeredHandCardId?: string;
 }
 
 interface MultiplayerStore {
@@ -284,7 +285,7 @@ function processMove(
       newState = loseInfluence(state, move.cardId!);
       break;
     case 'exchange_complete':
-      newState = completeExchange(state, move.keptCardIds!);
+      newState = completeExchange(state, move.keptCardIds![0], move.offeredHandCardId!);
       break;
   }
 

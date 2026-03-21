@@ -53,6 +53,9 @@ export function GameBoard() {
   const blockableChars = pendingAction ? getBlockableCharacters(pendingAction.type) : [];
   const humanIsTarget = pendingAction?.targetId === humanPlayer.id;
 
+  const exchangeActor = pendingAction ? gameState.players.find(p => p.id === pendingAction.actorId) : null;
+  const exchangeHandCards = (exchangeActor?.cards ?? []).filter(c => !c.revealed);
+
   const handleActionSelect = (action: ActionType) => {
     if (requiresTarget(action)) setPendingActionType(action);
     else humanDeclareAction(action);
@@ -221,8 +224,12 @@ export function GameBoard() {
             onReveal={humanLoseInfluence} />
         )}
 
-        {humanMustExchange && exchangeCards && (
-          <ExchangeDialog cards={exchangeCards} onConfirm={humanCompleteExchange} />
+        {humanMustExchange && (
+          <ExchangeDialog
+            handCards={exchangeHandCards}
+            drawnCards={exchangeCards ?? []}
+            onConfirm={(keptCardId, offeredHandCardId) => humanCompleteExchange(keptCardId, offeredHandCardId)}
+          />
         )}
 
         {phase === 'GAME_OVER' && winner && (

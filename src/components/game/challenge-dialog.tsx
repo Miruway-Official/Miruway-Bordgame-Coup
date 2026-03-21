@@ -23,11 +23,11 @@ const ACTION_TH: Record<string, string> = {
 };
 
 const CHAR_COLOR: Record<CharacterName, string> = {
-  Duke: 'var(--duke)',
-  Assassin: 'var(--assassin)',
-  Captain: 'var(--captain)',
-  Ambassador: 'var(--ambassador)',
-  Contessa: 'var(--contessa)',
+  'เจ้าพยา': 'var(--duke)',
+  'นักฆ่า': 'var(--assassin)',
+  'จอมโจร': 'var(--captain)',
+  'ทูต': 'var(--ambassador)',
+  'รัชทายาท': 'var(--contessa)',
 };
 
 export function ChallengeDialog({
