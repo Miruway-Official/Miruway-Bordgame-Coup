@@ -17,7 +17,7 @@ function CoinDots({ count }: { count: number }) {
   const max = 10;
   const dots = Math.min(count, max);
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 3, flexWrap: 'wrap', maxWidth: 72 }}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap', maxWidth: 60 }}>
       {Array.from({ length: dots }).map((_, i) => (
         <div key={i} className="coin-dot" />
       ))}
@@ -47,7 +47,7 @@ export function PlayerArea({
         display: 'flex',
         alignItems: 'center',
         gap: 12,
-        padding: isHuman ? '14px 16px' : '10px 12px',
+        padding: isHuman ? '10px 12px' : '7px 10px',
         borderRadius: 12,
         background: isCurrentTurn
           ? 'linear-gradient(135deg, oklch(18% 0.04 82) 0%, var(--bg-2) 100%)'
@@ -113,7 +113,7 @@ export function PlayerArea({
           <span
             style={{
               fontFamily: "'DM Sans', sans-serif",
-              fontSize: isHuman ? 15 : 13,
+              fontSize: isHuman ? 13 : 11,
               fontWeight: isHuman ? 600 : 500,
               color: isHuman ? 'var(--text-primary)' : 'var(--text-secondary)',
               whiteSpace: 'nowrap',
@@ -143,13 +143,13 @@ export function PlayerArea({
       </div>
 
       {/* Right: cards */}
-      <div style={{ display: 'flex', gap: isHuman ? 8 : 5, flexShrink: 0 }}>
+      <div style={{ display: 'flex', gap: isHuman ? 6 : 4, flexShrink: 0 }}>
         {player.cards.map(card => (
           <GameCard
             key={card.id}
             card={card}
             isHidden={!isHuman && !card.revealed}
-            size={isHuman ? 'md' : 'sm'}
+            size="sm"
           />
         ))}
       </div>

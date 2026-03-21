@@ -17,6 +17,7 @@ import { ExchangeDialog } from './exchange-dialog';
 import { GameLog } from './game-log';
 import { GameOverScreen } from './game-over-screen';
 import { TurnIndicator } from './turn-indicator';
+import { CenterTable } from './center-table';
 import { ScrollText, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -109,8 +110,8 @@ export function GameBoard() {
             )}
           </AnimatePresence>
 
-          {/* Spacer */}
-          <div className="min-h-[8px]" />
+          {/* Center table */}
+          <CenterTable gameState={gameState} isHumanTurn={isHumanTurn} />
 
           {/* Human player */}
           <PlayerArea player={humanPlayer} isCurrentTurn={isHumanTurn} isHuman

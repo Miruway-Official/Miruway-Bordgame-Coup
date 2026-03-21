@@ -11,13 +11,13 @@ interface ActionItem {
 }
 
 const ACTIONS: Record<ActionType, ActionItem> = {
-  income:      { label: 'รายได้',       sub: '+1 เหรียญ',       color: 'var(--text-secondary)' },
-  foreign_aid: { label: 'ต่างประเทศ',  sub: '+2 เหรียญ',       color: 'var(--text-secondary)' },
-  tax:         { label: 'เก็บภาษี',    sub: 'ดยุค · +3',       color: 'var(--duke)' },
-  steal:       { label: 'ขโมย',         sub: 'กัปตัน · +2',    color: 'var(--captain)' },
-  assassinate: { label: 'ลอบสังหาร',   sub: 'นักฆ่า',          color: 'var(--assassin)' },
-  exchange:    { label: 'แลกไพ่',       sub: 'เอกอัครฯ',        color: 'var(--ambassador)' },
-  coup:        { label: 'รัฐประหาร',   sub: 'บังคับเปิด',      color: 'var(--gold)' },
+  income:      { label: 'รายได้',       sub: '+1 เหรียญ',        color: 'var(--text-secondary)' },
+  foreign_aid: { label: 'ต่างประเทศ',  sub: '+2 เหรียญ',        color: 'var(--text-secondary)' },
+  tax:         { label: 'เก็บภาษี',    sub: 'เจ้าพยา · +3',    color: 'var(--duke)' },
+  steal:       { label: 'ขโมย',         sub: 'จอมโจร · +2',     color: 'var(--captain)' },
+  assassinate: { label: 'ลอบสังหาร',   sub: 'นักฆ่า · -3',     color: 'var(--assassin)' },
+  exchange:    { label: 'แลกไพ่',       sub: 'ทูต',              color: 'var(--ambassador)' },
+  coup:        { label: 'รัฐประหาร',   sub: 'บังคับเปิด · -7', color: 'var(--gold)' },
 };
 
 const ORDER: ActionType[] = [
@@ -45,7 +45,7 @@ export function ActionPanel({ availableActions, playerCoins, onAction }: ActionP
         background: 'var(--bg-1)',
         borderRadius: 16,
         border: '1px solid var(--border)',
-        padding: '14px 14px 12px',
+        padding: '10px 10px 8px',
         overflow: 'hidden',
       }}
     >
@@ -57,7 +57,7 @@ export function ActionPanel({ availableActions, playerCoins, onAction }: ActionP
           color: 'var(--text-muted)',
           letterSpacing: '0.12em',
           textTransform: 'uppercase',
-          marginBottom: 12,
+          marginBottom: 8,
           paddingLeft: 2,
         }}
       >
@@ -87,14 +87,14 @@ export function ActionPanel({ availableActions, playerCoins, onAction }: ActionP
                 flexDirection: 'column',
                 alignItems: 'flex-start',
                 gap: 3,
-                padding: '10px 12px',
-                borderRadius: 10,
+                padding: '8px 10px',
+                borderRadius: 8,
                 border: `1px solid ${disabled ? 'var(--border-subtle)' : cfg.color + '40'}`,
                 background: disabled ? 'transparent' : `${cfg.color}0d`,
                 cursor: disabled ? 'not-allowed' : 'pointer',
                 opacity: disabled ? 0.3 : 1,
                 transition: 'all 0.15s ease',
-                minHeight: 56,
+                minHeight: 46,
                 position: 'relative',
                 textAlign: 'left',
               }}
@@ -102,7 +102,7 @@ export function ActionPanel({ availableActions, playerCoins, onAction }: ActionP
               <span
                 style={{
                   fontFamily: "'DM Sans', sans-serif",
-                  fontSize: 13,
+                  fontSize: 12,
                   fontWeight: 600,
                   color: disabled
                     ? 'var(--text-muted)'
